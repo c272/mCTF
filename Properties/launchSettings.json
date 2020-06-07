@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "mCTF": {
+      "commandName": "Project",
+      "commandLineArgs": "challenge.mctf"
+    }
+  }
+}
