@@ -16,6 +16,7 @@ namespace mCTF
             //try
             {
                 var cpu = new mCPU(File.ReadAllBytes(args[0]));
+                cpu.Execute();
             }
             //catch (Exception e)
             //{

@@ -66,6 +66,8 @@ namespace mCTF
         /// </summary>
         public void ProcessBlocks(byte[] blocks)
         {
+            Log.Memory("Beginning memory block loading...");
+
             //Start at zero index.
             int curIndex = 0;
             bool sinProcessed = false, sCodeProcessed = false, sMainProcessed = false;
@@ -97,22 +99,26 @@ namespace mCTF
                 if (curIndex + 2 + blockLen*2 >= blocks.Length) { Log.Fatal("Invalid block at end of sequence (invalid length)"); }
                 byte[] newData = blocks.Skip(curIndex + 3).Take((int)blockLen * 2).ToArray();
 
+                //Copy the raw byte data into words, place into word array.
+                ushort[] newWords = new ushort[newData.Length / 2];
+                Buffer.BlockCopy(newData, 0, newWords, 0, newData.Length);
+
                 //Read the "space index" (where the memory will be copied to).
                 switch (blocks[curIndex])
                 {
                     case 0x1:
                         Log.Memory("Block at index [" + curIndex + "] is destined for SIN.");
-                        newData.CopyTo(SIN, 1);
+                        newWords.CopyTo(SIN, 1);
                         sinProcessed = true;
                         break;
                     case 0x2:
                         Log.Memory("Block at index [" + curIndex + "] is destined for SCODE.");
-                        newData.CopyTo(SCODE, 1);
+                        newWords.CopyTo(SCODE, 1);
                         sCodeProcessed = true;
                         break;
                     case 0x3:
                         Log.Memory("Block at index [" + curIndex + "] is destined for SMAIN.");
-                        newData.CopyTo(SMAIN, 1);
+                        newWords.CopyTo(SMAIN, 1);
                         sMainProcessed = true;
                         break;
                     default:
@@ -123,6 +129,17 @@ namespace mCTF
                 //Advance the index.
                 curIndex += 3 + (int)blockLen * 2;
             }
+        }
+
+        /// <summary>
+        /// Clears the first memory location in each major memory area.
+        /// </summary>
+        public void ClearLocationZero()
+        {
+            SSK[0] = 0x0;
+            SIN[0] = 0x0;
+            SMAIN[0] = 0x0;
+            SCODE[0] = 0x0;
         }
     }
 }

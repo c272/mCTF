@@ -38,7 +38,7 @@ namespace mCTF
             Console.ForegroundColor = colour;
             Console.Write($"[{name}]");
             Console.ResetColor();
-            Console.Write($" {msg}");
+            Console.Write($" {msg}\n");
         }
     }
 }
