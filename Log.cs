@@ -18,6 +18,12 @@ namespace mCTF
             PrintWithColouredName(msg, "MEMORY", ConsoleColor.Cyan);
         }
 
+        //Instruction log.
+        public static void Instruction(string instrMsg)
+        {
+            PrintWithColouredName(instrMsg, "INSTR", ConsoleColor.DarkGreen);
+        }
+
         //Fatal error has occured.
         public static void Fatal(string msg)
         {

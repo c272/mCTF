@@ -141,5 +141,125 @@ namespace mCTF
             SMAIN[0] = 0x0;
             SCODE[0] = 0x0;
         }
+
+        //Accesses FZERO.
+        public bool FZERO
+        {
+            get
+            {
+                return (RSTAT & 0x1) == 0x1;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x1; return; } //set true
+                RSTAT &= (ushort.MaxValue - 1); //set false
+            }
+        }
+
+        //Accesses FEQUL.
+        public bool FEQUL
+        {
+            get
+            {
+                return (RSTAT & 0x2) == 0x2;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x2; return; } //set true
+                RSTAT &= 0xFFFD; //set false
+            }
+        }
+
+        //Accesses FLT.
+        public bool FLT
+        {
+            get
+            {
+                return (RSTAT & 0x4) == 0x4;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x4; return; } //set true
+                RSTAT &= 0xFFFB; //set false
+            }
+        }
+
+        //Accesses FGT.
+        public bool FGT
+        {
+            get
+            {
+                return (RSTAT & 0x8) == 0x8;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x8; return; } //set true
+                RSTAT &= 0xFFF7; //set false
+            }
+        }
+
+        //Accesses FCRRY.
+        public bool FCRRY
+        {
+            get
+            {
+                return (RSTAT & 0x10) == 0x10;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x10; return; } //set true
+                RSTAT &= 0xFFEF; //set false
+            }
+        }
+
+        //Accesses FINF.
+        public bool FINF
+        {
+            get
+            {
+                return (RSTAT & 0x20) == 0x20;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x20; return; } //set true
+                RSTAT &= 0xFFDF; //set false
+            }
+        }
+
+        //Accesses FSE.
+        public bool FSE
+        {
+            get
+            {
+                return (RSTAT & 0x40) == 0x40;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x40; return; } //set true
+                RSTAT &= 0xFFBF; //set false
+            }
+        }
+
+        //Accesses FSF.
+        public bool FSF
+        {
+            get
+            {
+                return (RSTAT & 0x80) == 0x80;
+            }
+
+            set
+            {
+                if (value) { RSTAT |= 0x80; return; } //set true
+                RSTAT &= 0xFF7F; //set false
+            }
+        }
     }
 }
