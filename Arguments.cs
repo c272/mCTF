@@ -32,15 +32,16 @@ namespace mCTF
     /// </summary>
     public class ValueArgument : IArgument
     {
-        public ushort ArgumentSCODELocation { get; set; } = 0x0;
+        public ushort ArgumentSCODELocation { get; set; }
         public ushort Value { get; private set; }
 
         /// <summary>
         /// Creates a new value argument.
         /// Expects LITTLE ENDIAN data.
         /// </summary>
-        public ValueArgument(ushort data)
+        public ValueArgument(ushort data, ushort scLoc)
         {
+            ArgumentSCODELocation = scLoc;
             Value = data;
         }
 

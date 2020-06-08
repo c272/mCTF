@@ -38,7 +38,7 @@ namespace mCTF
         {
             byte[] bytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(input.ToString());
             string result = Encoding.GetEncoding("ISO-8859-1").GetString(bytes);
-            return string.Equals(input, result);
+            return string.Equals(input.ToString(), result);
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace mCTF
         /// </summary>
         public static int GetPointerToAfter(this List<IArgument> args, int iptr)
         {
-            if (args.Where(x => x is MemoryArgument).Count() > 0)
+            if (args.Where(x => x is MemoryArgument || x is ValueArgument).Count() > 0)
             {
-                return args.Where(x => x is MemoryArgument).Last().ArgumentSCODELocation + 1;
+                return args.Where(x => x is MemoryArgument || x is ValueArgument).Last().ArgumentSCODELocation + 1;
             }
             else if (args.Where(x => x is RegisterArgument).Count() > 0)
             {

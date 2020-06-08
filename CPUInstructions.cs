@@ -186,7 +186,11 @@ namespace mCTF
         /// </summary>>
         private bool JEQU()
         {
-            if (mem.FEQUL) { return JUMP(); }
+            if (mem.FEQUL) {
+                Log.Debug("Successful JEQU check, jumping to RTRGT.");
+                return JUMP(); 
+            }
+            Log.Debug("Failed JEQU check, continuing execution.");
             return false;
         }
 
@@ -272,7 +276,7 @@ namespace mCTF
             mem.RSK = mem.RSR;
 
             //2. Pop RX off the stack.
-            var valueArg = new ValueArgument(0x0);
+            var valueArg = new ValueArgument(0x0, 0x0);
             POP(new List<IArgument>() { valueArg });
             ushort offset = valueArg.Value;
 
@@ -311,7 +315,7 @@ namespace mCTF
             //2. Push the length of this [CALL] instruction onto the stack.
             //Calculated by (last argument address + 1) - baseAddr.
             ushort callLen = (ushort)(args.GetPointerToAfter(iptr) - iptr);
-            PUSH(new List<IArgument>() { new ValueArgument(callLen.Reverse()) });
+            PUSH(new List<IArgument>() { new ValueArgument(callLen.Reverse(), 0x0) });
 
             //3. Move RSK into RSR.
             mem.RSR = mem.RSK;
@@ -422,7 +426,7 @@ namespace mCTF
         }
 
         /// <summary>
-        /// Bitwise CMPL arg1 onto arg1.
+        /// Bitwise complement arg1 onto arg1.
         /// </summary>
         private bool CMPL(List<IArgument> args)
         {
@@ -467,6 +471,7 @@ namespace mCTF
 
             //Set FEQUL.
             mem.FEQUL = args[0].Read() == args[1].Read();
+            Log.Debug("CMP set FEQUL to: " + mem.FEQUL.ToString() + "(" + args[0].Read() + " vs. " + args[1].Read() + ").");
 
             //Set FLT and FGT.
             mem.FLT = args[0].Read() < args[1].Read();

@@ -38,7 +38,7 @@ namespace mCTF
             }
             else if (signature.SequenceEqual(Constants.ZCOMPRESSED_MCTF_HEADER))
             {
-                Log.Debug("Compressed mCTF header detected (no compression).");
+                Log.Debug("Compressed mCTF header detected (zstd compression).");
 
                 //Use ZStandard to decompress (past first 4 bytes).
                 using (var memoryStream = new MemoryStream(program.Skip(4).ToArray()))
@@ -57,6 +57,9 @@ namespace mCTF
 
             //Let the memory process the initial memory blocks.
             mem.ProcessBlocks(memBlocks);
+
+            //REMOVE ME! hacky binary patching
+            mem.SCODE[64] = 0x6100;
         }
 
         /// <summary>
@@ -133,7 +136,7 @@ namespace mCTF
             {
                 for (int i=1; i<=3; i++)
                 {
-                    args.Add(new ValueArgument(mem.SCODE[instrStart + i]));
+                    args.Add(new ValueArgument(mem.SCODE[instrStart + i], (ushort)(instrStart + i)));
                 }
                 return args;
             }
