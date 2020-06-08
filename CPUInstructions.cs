@@ -553,10 +553,11 @@ namespace mCTF
                 mem.FZERO = true;
                 return false;
             }
-            
+
             //Write to memory.
-            ushort toWrite = BitConverter.ToUInt16(BitConverter.GetBytes(nextChar));
-            args[0].Write(nextChar, Instructions.READ);
+            var chrBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(nextChar.ToString());
+            ushort toWrite = chrBytes[0];
+            args[0].Write(toWrite, Instructions.READ);
             return false;
         }
 

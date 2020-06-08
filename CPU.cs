@@ -57,9 +57,6 @@ namespace mCTF
 
             //Let the memory process the initial memory blocks.
             mem.ProcessBlocks(memBlocks);
-
-            //REMOVE ME! hacky binary patching
-            mem.SCODE[64] = 0x6100;
         }
 
         /// <summary>
