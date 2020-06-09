@@ -284,10 +284,11 @@ namespace mCTF
             mem.ISPTR = (ushort)(mem.RCALL + offset);
 
             //4. Pop RCALL, RSTAT, RX, RY and RZ off the stack, in reverse order.
-            for (int i = 0; i < 5; i++)
-            {
-                POP(new List<IArgument>() { valueArg });
-            }
+            POP(new List<IArgument>() { new RegisterArgument((ushort)ArgRegisterType.RZ, mem, 0x0) });
+            POP(new List<IArgument>() { new RegisterArgument((ushort)ArgRegisterType.RY, mem, 0x0) });
+            POP(new List<IArgument>() { new RegisterArgument((ushort)ArgRegisterType.RX, mem, 0x0) });
+            POP(new List<IArgument>() { new RegisterArgument((ushort)ArgRegisterType.RSTAT, mem, 0x0) });
+            POP(new List<IArgument>() { new RegisterArgument((ushort)ArgRegisterType.RCALL, mem, 0x0) });
 
             //5. Push RTRGT onto the stack.
             PUSH(new List<IArgument>() { new RegisterArgument((ushort)ArgRegisterType.RTRGT, mem, 0x0) });
