@@ -131,6 +131,16 @@ namespace mCTF
             //Apparently it's special and doesn't follow convention.
             if ((Instructions)opcode == Instructions.CALL)
             {
+                //For some reason, there are CALLs with only one argument, 0x1000, after them.
+                //This is a hack to follow that rule. Passing in RX as a guess.
+                if (mem.SCODE[instrStart + 1] == 0x1000)
+                {
+                    args.Add(new RegisterArgument((ushort)ArgRegisterType.RX, mem, (ushort)(instrStart + 1)));
+                    args.Add(new ValueArgument(0x0000, (ushort)(instrStart + 1)));
+                    args.Add(new ValueArgument(0x0000, (ushort)(instrStart + 1)));
+                    return args;
+                }
+
                 for (int i=1; i<=3; i++)
                 {
                     args.Add(new ValueArgument(mem.SCODE[instrStart + i], (ushort)(instrStart + i)));

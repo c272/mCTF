@@ -275,7 +275,7 @@ namespace mCTF
             //1. Move RSR into RSK.
             mem.RSK = mem.RSR;
 
-            //2. Pop RX off the stack.
+            //2. Pop offset off the stack.
             var valueArg = new ValueArgument(0x0, 0x0);
             POP(new List<IArgument>() { valueArg });
             ushort offset = valueArg.Value;
@@ -532,8 +532,8 @@ namespace mCTF
         /// </summary>
         private bool WRIT(List<IArgument> args)
         {
-            byte[] charBytes = BitConverter.GetBytes((ushort)(args[0].Read() & 0x0F));
-            string toPrint = Encoding.GetEncoding("ISO-8859-1").GetString(charBytes);
+            byte thisChar = (byte)(args[0].Read() & 0xFF);
+            string toPrint = Encoding.GetEncoding("ISO-8859-1").GetString(new byte[] { thisChar });
 
             //Write to STDOUT.
             Console.Write(toPrint);
@@ -557,6 +557,7 @@ namespace mCTF
             //Write to memory.
             var chrBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(nextChar.ToString());
             ushort toWrite = chrBytes[0];
+            if (toWrite == 0) { mem.FZERO = true; }
             args[0].Write(toWrite, Instructions.READ);
             return false;
         }
