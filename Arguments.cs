@@ -220,14 +220,14 @@ namespace mCTF
             }
 
             //Reverse the return value if big endian.
-            if (!bigEndian) { return retVal; }
+            if (bigEndian) { return retVal; }
             return retVal.Reverse();
         }
 
         public void Write(ushort data, Instructions cur, bool bigEndian = true) 
         {
-            //Reverse the data if big endian.
-            if (bigEndian)
+            //Reverse the data if not big endian (all literal registers expect big endian).
+            if (!bigEndian)
             {
                 data = data.Reverse();
             }

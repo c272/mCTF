@@ -11,22 +11,29 @@ namespace mCTF
     public class Memory
     {
         //General registers X, Y and Z.
-        public ushort RX = 0x0, RY = 0x0, RZ = 0x0;
+        private ushort RX_ = 0x0, RY_ = 0x0, RZ_ = 0x0;
 
         //Target register, write only.
-        public ushort RTRGT = 0x0;
+        private ushort RTRGT_ = 0x0;
 
         //Flags register, read only.
         public ushort RSTAT = 0x0;
 
         //Call register, read only.
-        public ushort RCALL = 0x0;
+        private ushort RCALL_ = 0x0;
 
         //Stack pointer register, can only be written/read by the PUSH/POP instruction.
         public ushort RSK = 0x0;
 
         //Stack return register, can only be written/read by the CALL instruction.
         public ushort RSR = 0x0;
+
+        //Literal use registers all expect bigendian data.
+        public ushort RX { get { return RX_.Reverse(); } set { RX_ = value.Reverse(); } }
+        public ushort RY { get { return RY_.Reverse(); } set { RY_ = value.Reverse(); } }
+        public ushort RZ { get { return RZ_.Reverse(); } set { RZ_ = value.Reverse(); } }
+        public ushort RTRGT { get { return RTRGT_.Reverse(); } set { RTRGT_ = value.Reverse(); } }
+        public ushort RCALL { get { return RCALL_.Reverse(); } set { RCALL_ = value.Reverse(); } }
 
         //Stack space. 65536 words long.
         //Only readable/writeable from PUSH/POP.
@@ -43,7 +50,8 @@ namespace mCTF
         public ushort[] SCODE = new ushort[0x10000];
 
         //The instruction pointer.
-        public ushort ISPTR = 0x0;
+        public ushort ISPTR_ = 0x0;
+        public ushort ISPTR { get { return ISPTR_.Reverse(); } set { ISPTR_ = value.Reverse(); } }
 
         /// <summary>
         /// Memory setup for initial states.

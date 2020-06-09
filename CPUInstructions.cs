@@ -496,7 +496,7 @@ namespace mCTF
             ushort immediate = imm.Location;
 
             //Copy into arg2.
-            args[1].Write(immediate, Instructions.ICPY, false);
+            args[1].Write(immediate, Instructions.ICPY, true);
 
             //Set FZERO.
             mem.FZERO = args[1].Read() == 0;
