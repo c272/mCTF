@@ -12,7 +12,7 @@ namespace mCTF
         /// Read the location of the argument.
         /// This returns BIG ENDIAN data.
         /// </summary>
-        ushort Read(bool bigEndian = true);
+        ushort Read(bool bigEndian = true, bool forceRead = false);
 
         /// <summary>
         /// Write to the argument location.
@@ -45,7 +45,7 @@ namespace mCTF
             Value = data;
         }
 
-        public ushort Read(bool bigEndian = true)
+        public ushort Read(bool bigEndian = true, bool forceRead = false)
         {
             if (bigEndian) { return Value.Reverse(); }
             return Value;
@@ -86,7 +86,7 @@ namespace mCTF
             ArgumentSCODELocation = scLoc;
         }
 
-        public ushort Read(bool bigEndian = true)
+        public ushort Read(bool bigEndian = true, bool forceRead = false)
         {
             //If the location is zero, return empty byte.
             if (Location == 0x0) { return 0x0; }
@@ -186,7 +186,7 @@ namespace mCTF
             }
         }
 
-        public ushort Read(bool bigEndian = true) 
+        public ushort Read(bool bigEndian = true, bool forceRead = false) 
         {
             ushort retVal = 0x0;
 
@@ -203,6 +203,7 @@ namespace mCTF
                     retVal = mem.RZ;
                     break;
                 case ArgRegisterType.RTRGT:
+                    if (forceRead) { retVal = mem.RTRGT; break; }
                     retVal = 0x0;
                     break;
                 case ArgRegisterType.RSTAT:

@@ -30,11 +30,11 @@ namespace mCTF
             var memArg = args[0] as MemoryArgument;
             if (memArg.Area == MemArgArea.SIN)
             {
-                mem.SIN[memArg.Location + offset] = args[1].Read();
+                args[1].Write(mem.SIN[memArg.Location + offset], Instructions.RCPF);
             }
             else if (memArg.Area == MemArgArea.SMAIN)
             {
-                mem.SMAIN[memArg.Location + offset] = args[1].Read();
+                args[1].Write(mem.SMAIN[memArg.Location + offset], Instructions.RCPF);
             }
             else
             {
@@ -65,10 +65,11 @@ namespace mCTF
             //If sign isn't set, reverse the offset to go backwards.
             if (!isSigned) { offset = -offset; }
 
-            //Copy the first argument into the second w/ offset.
+            //Copy the second argument into the first w/ offset.
             var memArg = args[1] as MemoryArgument;
             if (memArg.Area == MemArgArea.SIN)
             {
+                //This might be read only, not sure yet.
                 mem.SIN[memArg.Location + offset] = args[0].Read();
             }
             else if (memArg.Area == MemArgArea.SMAIN)
@@ -353,6 +354,7 @@ namespace mCTF
             }
 
             //Read from the stack.
+            Log.Debug("Popped 0x" + mem.SSK[mem.RSK].ToString("X") + " from stack.");
             args[0].Write(mem.SSK[mem.RSK], Instructions.POP);
 
             //Increase stack pointer.
@@ -380,7 +382,7 @@ namespace mCTF
             mem.RSK--;
 
             //Write to SSK with the argument.
-            mem.SSK[mem.RSK] = args[0].Read();
+            mem.SSK[mem.RSK] = args[0].Read(true, true);
 
             //Set stack full (FSF) and FZERO.
             if (mem.RSK == 0x0) { mem.FSF = true; }
@@ -431,7 +433,7 @@ namespace mCTF
         /// </summary>
         private bool CMPL(List<IArgument> args)
         {
-            args[0].Write((ushort)~args[0].Read(), Instructions.CMPL);
+            args[0].Write((ushort)~args[0].Read(false), Instructions.CMPL, false);
 
             //Set FZERO.
             mem.FZERO = args[0].Read() == 0;
@@ -455,7 +457,7 @@ namespace mCTF
         /// </summary>
         private bool AND(List<IArgument> args)
         {
-            args[0].Write((ushort)(args[0].Read() & args[1].Read()), Instructions.AND);
+            args[0].Write((ushort)(args[0].Read(false) & args[1].Read(false)), Instructions.AND, false);
 
             //Set FZERO.
             mem.FZERO = args[0].Read() == 0;
@@ -558,6 +560,10 @@ namespace mCTF
             //Write to memory.
             var chrBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(nextChar.ToString());
             ushort toWrite = chrBytes[0];
+            
+            //Convert carriage returns to normal 0x10 line breaks.
+            if (toWrite == 13) { toWrite = 10; }
+
             if (toWrite == 0) { mem.FZERO = true; }
             args[0].Write(toWrite, Instructions.READ);
             return false;

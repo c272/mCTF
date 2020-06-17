@@ -57,6 +57,12 @@ namespace mCTF
 
             //Let the memory process the initial memory blocks.
             mem.ProcessBlocks(memBlocks);
+
+            //Manipulate SCODE to remove dumb CTF image bugs.
+            mem.SCODE[10] = 13;
+            mem.SCODE[0x32] = 0x7D;
+            mem.SCODE[81] = 0b0000000000010000;
+            mem.SCODE[82] = 0x0;
         }
 
         /// <summary>
@@ -89,6 +95,10 @@ namespace mCTF
             //Get the opcode for the instruction.
             byte[] opcodeBits = BitConverter.GetBytes((ushort)((mem.SCODE[iptr] & 0x1FF))).ToArray();
             ushort opcode = BitConverter.ToUInt16(opcodeBits, 0);
+
+            //HACK FOR DUMB CTF IMAGE BUG! REMOVE ME!
+            //todo: remove
+            if (iptr == 0x010) { mem.RZ = 0; };
 
             //Execute the instruction! If it returns true, then stop execution.
             bool haltExec = ExecuteInstruction(opcode, isSigned, iptr, args);
@@ -126,27 +136,6 @@ namespace mCTF
             //Get number of arguments.
             int numArgs = Constants.ParameterLookup[(Instructions)opcode];
             if (numArgs == 0) { return args; }
-
-            //If it's call, load the three words DIRECTLY after the opcode and return.
-            //Apparently it's special and doesn't follow convention.
-            if ((Instructions)opcode == Instructions.CALL)
-            {
-                //For some reason, there are CALLs with only one argument, 0x1000, after them.
-                //This is a hack to follow that rule. Passing in RX as a guess.
-                if (mem.SCODE[instrStart + 1] == 0x1000)
-                {
-                    args.Add(new RegisterArgument((ushort)ArgRegisterType.RX, mem, (ushort)(instrStart + 1)));
-                    args.Add(new ValueArgument(0x0000, (ushort)(instrStart + 1)));
-                    args.Add(new ValueArgument(0x0000, (ushort)(instrStart + 1)));
-                    return args;
-                }
-
-                for (int i=1; i<=3; i++)
-                {
-                    args.Add(new ValueArgument(mem.SCODE[instrStart + i], (ushort)(instrStart + i)));
-                }
-                return args;
-            }
 
             //Are any of the arguments registers?
             int numRegArgs = 0;
@@ -429,39 +418,40 @@ namespace mCTF
         {
             string instrMsg = "";
 
+            //iptr
+            instrMsg += "0x" + iptr.ToString("X") + " ";
+
             //name
-            instrMsg += ((Instructions)opcode).ToString() + " called (";
+            instrMsg += ((Instructions)opcode).ToString().ToLower();
             
             //signed
-            if (isSigned) { instrMsg += "signed) "; }
-            else { instrMsg += "unsigned) "; }
+            if (isSigned) { instrMsg += "+ "; }
+            else { instrMsg += " "; }
 
-            //iptr
-            instrMsg += " at SCODE 0x" + iptr.ToString("X") + " with arguments:\n";
+            //args
             foreach (var arg in args)
             {
-                instrMsg += "\t";
                 if (arg is MemoryArgument)
                 {
                     var memArg = arg as MemoryArgument;
-                    instrMsg += "[memarg] 0x" + memArg.Location.ToString("X") + " in " + memArg.Area.ToString() + " (value 0x" + memArg.Read() + ").\n";
+                    instrMsg += memArg.Area.ToString().ToLower() + " 0x" + memArg.Location.ToString("X") + ", ";
                 }
                 else if (arg is RegisterArgument)
                 {
                     var regArg = arg as RegisterArgument;
-                    instrMsg += "[regarg] " + regArg.Register.ToString() + "\n";
+                    instrMsg += regArg.Register.ToString().ToLower() + ", ";
                 }
                 else if (arg is ValueArgument)
                 {
                     var valArg = arg as ValueArgument;
-                    instrMsg += "[valarg] value " + valArg.Value.ToString("X") + "\n";
+                    instrMsg += valArg.Value.ToString("X") + ", ";
                 }
                 else
                 {
-                    instrMsg += "[unknwn] unknown argument type\n";
+                    instrMsg += "[unknwn], ";
                 }
             }
-            instrMsg = instrMsg.TrimEnd('\n');
+            instrMsg = instrMsg.TrimEnd(',', ' ');
 
             //Print the instruction.
             Log.Instruction(instrMsg);
