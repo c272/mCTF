@@ -9,6 +9,7 @@ namespace mCTF
         //Debug log.
         public static void Debug(string msg)
         {
+            if (!Program.DebugMode) { return; }
             PrintWithColouredName(msg, "DEBUG", ConsoleColor.DarkYellow);
         }
 

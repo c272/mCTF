@@ -57,12 +57,6 @@ namespace mCTF
 
             //Let the memory process the initial memory blocks.
             mem.ProcessBlocks(memBlocks);
-
-            //Manipulate SCODE to remove dumb CTF image bugs.
-            mem.SCODE[10] = 13;
-            mem.SCODE[0x32] = 0x7D;
-            mem.SCODE[81] = 0b0000000000010000;
-            mem.SCODE[82] = 0x0;
         }
 
         /// <summary>
@@ -215,7 +209,7 @@ namespace mCTF
         private bool ExecuteInstruction(ushort opcode, bool isSigned, ushort iptr, List<IArgument> args)
         {
             //Print the debug message for the instruction.
-            PrintInstruction(opcode, isSigned, iptr, args);
+            if (Program.DebugMode) { PrintInstruction(opcode, isSigned, iptr, args); }
 
             //Switch on the opcode and execute as required.
             switch (opcode)

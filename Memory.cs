@@ -94,8 +94,8 @@ namespace mCTF
 
                 //Read the length of this block. It's little endian, so reverse first.
                 if (curIndex + 2 >= blocks.Length) { Log.Fatal("Invalid block at end of sequence (no length)."); }
-                byte[] blockLenBytes = new byte[] { blocks[curIndex + 1], blocks[curIndex + 2], 0x0, 0x0 };
-                uint blockLen = BitConverter.ToUInt32(blockLenBytes, 0);
+                byte[] blockLenBytes = new byte[] { blocks[curIndex + 1], blocks[curIndex + 2] };
+                ushort blockLen = BitConverter.ToUInt16(blockLenBytes, 0);
 
                 //Make sure the length is valid.
                 if (blockLen > 65534)

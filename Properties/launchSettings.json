@@ -2,7 +2,7 @@
   "profiles": {
     "mCTF": {
       "commandName": "Project",
-      "commandLineArgs": "challenge.mctf"
+      "commandLineArgs": "challenge_fixed.mctf"
     }
   }
 }
