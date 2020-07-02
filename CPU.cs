@@ -90,10 +90,6 @@ namespace mCTF
             byte[] opcodeBits = BitConverter.GetBytes((ushort)((mem.SCODE[iptr] & 0x1FF))).ToArray();
             ushort opcode = BitConverter.ToUInt16(opcodeBits, 0);
 
-            //HACK FOR DUMB CTF IMAGE BUG! REMOVE ME!
-            //todo: remove
-            if (iptr == 0x010) { mem.RZ = 0; };
-
             //Execute the instruction! If it returns true, then stop execution.
             bool haltExec = ExecuteInstruction(opcode, isSigned, iptr, args);
 
@@ -119,7 +115,7 @@ namespace mCTF
         /// <returns></returns>
         private List<IArgument> GetArguments(int instrStart)
         {
-            //Make the argument array (3 words).
+            //Make the argument array.
             List<IArgument> args = new List<IArgument>();
 
             //Get the opcode (little endian), use lookup table to find the number of arguments.
